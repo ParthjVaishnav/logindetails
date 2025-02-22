@@ -48,7 +48,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            return redirect()->route('dashboard')->with('success', 'Login successful!');
+            return redirect()->route('2fa.setup')->with('success', 'Login successful!');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials.']);

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TwoFAController;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [HomeController::class, 'home']);
@@ -71,3 +72,12 @@ Route::post('/otp-verification', [CustomerController::class, 'verifyOtps'])->nam
 Route::get('/reset-passwords', [CustomerController::class, 'showResetPasswordForm'])->name('reset.password.form');
 Route::post('/reset-passwords', [CustomerController::class, 'resetPassword'])->name('password.reset');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/2fa/setup', [TwoFAController::class, 'show2FASetup'])->name('2fa.setup');
+    Route::post('/2fa/verify', [TwoFAController::class, 'verify2FA'])->name('2fa.verify');
+
+    // Dashboard - Protected with 2FA Middleware
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->middleware('2fa')->name('dashboard');
+});
