@@ -19,7 +19,7 @@
     <form action="{{ route('2fa.verify') }}" method="POST">
         @csrf
         <label for="code">Enter OTP:</label>
-        <input type="text" name="code" required>
+        <input type="otp" name="code" required>
         <button type="submit">Verify</button>
     </form>
 </body>
