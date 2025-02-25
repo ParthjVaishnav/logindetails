@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         body {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            animation: fadeIn 0.5s ease-in-out;
+            font-family: 'Poppins', sans-serif;
+            animation: fadeIn 0.6s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -29,16 +33,18 @@
         }
 
         .form-wrapper {
-            background-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
-            color: #333;
             margin-bottom: 20px;
+            font-size: 26px;
             animation: slideInDown 0.7s ease-out;
         }
 
@@ -47,110 +53,100 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        p {
-            color: #555;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
         .input-group {
             margin-bottom: 20px;
-            position: relative;
+            text-align: left;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #333;
+            font-size: 14px;
             font-weight: bold;
+            margin-bottom: 5px;
         }
 
         input[type="password"] {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 5px;
-            box-sizing: border-box;
             font-size: 16px;
-            transition: border-color 0.3s ease;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            outline: none;
         }
 
-        input[type="password"]:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        input[type="password"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .reset-btn {
-            background-color: #007bff;
+            background: #ff7eb3;
             color: white;
-            padding: 14px 20px;
+            padding: 14px;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
             font-size: 18px;
+            cursor: pointer;
             width: 100%;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s;
         }
 
         .reset-btn:hover {
-            background-color: #0056b3;
+            background: #ff5f99;
         }
 
         .reset-btn:disabled {
-            background-color: #b0c4de;
+            background: rgba(255, 255, 255, 0.3);
             cursor: not-allowed;
         }
 
         .alert {
             padding: 10px;
-            margin-bottom: 15px;
             border-radius: 5px;
+            text-align: center;
         }
 
         .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
+            background: rgba(40, 167, 69, 0.8);
         }
 
         .alert-danger {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+            background: rgba(220, 53, 69, 0.8);
         }
 
         .text-danger {
-            color: #dc3545;
-            font-size: 0.8em;
-            margin-top: 5px;
-            display: block;
+            color: #ff4d4d;
+            font-size: 12px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="form-wrapper">
             <h1>Reset Password</h1>
-            <p>Enter your new password.</p>
+            <p>Enter your new password</p>
+
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
             @if(session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
+
             <form action="{{ route('password.reset') }}" method="POST">
                 @csrf
                 <div class="input-group">
                     <label for="password">New Password</label>
-                    <input type="password" id="password" name="password" required oninput="validateInputs()">
+                    <input type="password" id="password" name="password" placeholder="Enter new password" required oninput="validateInputs()">
                     @error('password')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="input-group">
                     <label for="password_confirmation">Confirm Password</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" required oninput="validateInputs()">
+                    <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm new password" required oninput="validateInputs()">
                 </div>
                 <button type="submit" class="reset-btn" id="resetPasswordButton" disabled>Reset Password</button>
             </form>
@@ -162,10 +158,9 @@
             let password = document.getElementById('password').value;
             let confirmPassword = document.getElementById('password_confirmation').value;
             let resetButton = document.getElementById('resetPasswordButton');
-
-            // Enable button only when both fields are filled
             resetButton.disabled = !(password.length > 0 && confirmPassword.length > 0);
         }
     </script>
 </body>
+
 </html>

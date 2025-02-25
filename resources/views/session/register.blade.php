@@ -166,32 +166,59 @@
         }
 
         function verifyOtp() {
-    let enteredOtp = document.querySelector('input[name="otp"]').value;
-    let passwordInputs = document.querySelectorAll('input[type="password"]');
-    let registerButton = document.querySelector('button[type="submit"]');
-    let sendOtpButton = document.querySelector('.btn-primary');
+            let enteredOtp = document.querySelector('input[name="otp"]').value;
+            let passwordInputs = document.querySelectorAll('input[type="password"]');
+            let registerButton = document.querySelector('button[type="submit"]');
+            let sendOtpButton = document.querySelector('.btn-primary');
 
-    let currentTime = new Date().getTime();
-    if (!generatedOtp || (currentTime - otpTimestamp) > 60000) {
-        showMessage("⚠️ OTP expired! Request a new one.", "error");
-        return;
-    }
+            let currentTime = new Date().getTime();
+            if (!generatedOtp || (currentTime - otpTimestamp) > 60000) {
+                showMessage("⚠️ OTP expired! Request a new one.", "error");
+                return;
+            }
 
-    if (enteredOtp == generatedOtp) {
-        showMessage("✅ OTP Verified Successfully!", "success");
+            if (enteredOtp == generatedOtp) {
+                showMessage("✅ OTP Verified Successfully!", "success");
 
-        // Stop the countdown timer
-        clearInterval(countdownInterval);
-        sendOtpButton.innerText = "Verified ✅";
-        sendOtpButton.disabled = true;
+                // Stop the countdown timer
+                clearInterval(countdownInterval);
+                sendOtpButton.innerText = "Verified ✅";
+                sendOtpButton.disabled = true;
 
-        // Enable password fields and register button
-        passwordInputs.forEach(input => input.disabled = false);
-        registerButton.disabled = false;
-    } else {
-        showMessage("❌ Invalid OTP. Please try again.", "error");
-    }
+                // Enable password fields and register button
+                passwordInputs.forEach(input => input.disabled = false);
+                registerButton.disabled = false;
+
+                // Add password length validation
+                passwordInputs.forEach(input => {
+                    input.addEventListener('input', function () {
+                        if (this.value.length < 6) {
+                            showMessage("⚠️ Password must be at least 6 characters!", "error");
+                            registerButton.disabled = true;
+                        } else {
+                            registerButton.disabled = false;
+                        }
+                    });
+                });
+
+            } else {
+                showMessage("❌ Invalid OTP. Please try again.", "error");
+            }
+        }
+        function showSuccessMessage(message) {
+    let messageBox = document.getElementById('messageBox');
+    messageBox.innerText = message;
+    messageBox.style.background = "rgba(76, 175, 80, 0.7)"; // Green background for success
+    messageBox.style.color = "white";
+    messageBox.style.padding = "10px";
+    messageBox.style.borderRadius = "5px";
+    messageBox.style.display = "block";
+
+    setTimeout(() => {
+        messageBox.style.display = "none";
+    }, 3000);
 }
+
 
     </script>
 </body>
