@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Mail\PasswordResetOtp;
+use PragmaRX\Google2FAQRCode\Google2FA;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
@@ -81,3 +82,20 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->middleware('2fa')->name('dashboard');
 });
+
+
+Route::get('/2fa/regenerate', function (Request $request) {
+    $google2fa = new Google2FA();
+
+    // Generate a new secret key for the QR Code
+    $secretKey = $google2fa->generateSecretKey();
+
+    // Generate a new QR Code Image
+    $qrCodeImage = $google2fa->getQRCodeInline(
+        'YourAppName', // Change this to your app name
+        $request->user()->email, // Get user's email
+        $secretKey
+    );
+
+    return response()->json(['qrCodeImage' => $qrCodeImage]);
+})->name('2fa.regenerate');

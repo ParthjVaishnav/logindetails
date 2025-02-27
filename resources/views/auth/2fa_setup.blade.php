@@ -6,6 +6,7 @@
     <title>Setup Two-Factor Authentication</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -36,6 +37,11 @@
         .qr-container {
             padding: 20px 0;
         }
+        .timer {
+            font-size: 14px;
+            color: #777;
+            margin-top: 10px;
+        }
         .form-control {
             border-radius: 25px;
             border: 1px solid #D1D1D1;
@@ -62,10 +68,11 @@
 <body>
     <div class="container">
         <div class="header">Two-Step Verification</div>
-        <div class="qr-container">
+        <div class="qr-container" id="qrCode">
             {!! $qrCodeImage !!}
         </div>
         <p>Scan the QR code with Google Authenticator or enter this key manually:</p>
+        <p class="timer">QR Code refreshes in <span id="countdown">30</span> seconds...</p>
         <form action="{{ route('2fa.verify') }}" method="POST">
             @csrf
             <label for="code" class="form-label">Enter OTP:</label>
@@ -73,5 +80,34 @@
             <button type="submit" class="btn-verify mt-3">Verify</button>
         </form>
     </div>
+
+    <script>
+        let timeLeft = 30;
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                document.getElementById('countdown').innerText = timeLeft;
+            } else {
+                regenerateQRCode();
+                timeLeft = 30;
+            }
+        }
+
+        function regenerateQRCode() {
+            $.ajax({
+                url: "{{ route('2fa.regenerate') }}", // Laravel route to regenerate QR code
+                method: "GET",
+                success: function(response) {
+                    $('#qrCode').html(response.qrCodeImage);
+                },
+                error: function() {
+                    console.error("Failed to regenerate QR code.");
+                }
+            });
+        }
+
+        setInterval(updateTimer, 1000);
+    </script>
 </body>
 </html>
